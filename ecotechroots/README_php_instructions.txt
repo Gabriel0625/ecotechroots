@@ -1,0 +1,1 @@
+README: See php/ for backend files. Import your SQL and place folder in XAMPP htdocs.

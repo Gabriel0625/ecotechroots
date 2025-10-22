@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcotechRoots - Nova Senha</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="shortcut icon" href="favicon.com/favicon.png" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+:root {
+  --bege: rgba(200, 241, 153, 0.15);
+  --verde-800: #234d37;
+  --verde-700: #2d6a4f;
+  --verde-500: #52b788;
+  --verde-300: #95d5b2;
+  --branco: #f3fbe9;
+}
+
+body, html {
+  margin: 0; padding: 0;
+  font-family: Roboto, sans-serif;
+  background: var(--bege);
+  color: var(--verde-700);
+  height:100%; overflow:hidden;
+}
+
+header {
+  background-color: var(--verde-800);
+  color: var(--branco);
+  position: fixed; top: 0; width: 100%; height: 60px;
+  display:flex; align-items:center; padding:0 1rem;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15); z-index:1000;
+}
+
+/* Sidebar */
+aside{
+  width:220px;
+  background:#234d37;
+  color:#fff;
+  padding-top:80px;
+  min-height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+}
+aside nav ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+aside nav ul li{
+  padding:12px 20px;
+}
+aside nav ul li a{
+  color:#fff;
+  text-decoration:none;
+}
+aside nav ul li a:hover{
+  text-decoration:underline;
+}
+
+/* Área principal */
+main.container{
+  margin-left:220px;
+  margin-top:80px;
+  flex:1;
+  padding:20px;
+}
+
+/* Hero da tela nova senha */
+.hero-forgot{
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 60px 1rem;
+  box-sizing: border-box;
+}
+
+/* Painel */
+.hero-forgot .panel{
+  width: 100%;
+  max-width: 900px;
+  border-radius: 12px;
+  padding: 48px 40px;
+  background-image: url('image/nova-senha.png'); /* imagem opcional */
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 18px;
+  position:relative;
+}
+.hero-forgot .panel::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:#97a48708;
+  border-radius: 12px;
+  pointer-events: none;
+}
+.hero-forgot .panel > * { position: relative; z-index: 2; }
+
+.panel-logo{ width: 72px; height: 72px; object-fit: contain; }
+
+.panel h2{
+  margin: 0;
+  color: #234d37;
+  font-size: 1.6rem;
+}
+.help{
+  margin:0;
+  color: #234d37;
+  text-align:center;
+  max-width: 520px;
+}
+
+.newpass-form{
+  width:100%;
+  max-width:560px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:6px;
+}
+.newpass-form label{
+  font-size:0.85rem;
+  color:#234d37;
+  font-weight:600;
+  margin-left:6px;
+}
+.newpass-form input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius: 30px;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-size: 14px;
+  outline:none;
+  box-shadow: none;
+}
+
+.btn-publicar{
+  background:#234d37;
+  color:#fff;
+  border:none;
+  border-radius:30px;
+  padding:10px 24px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+  margin-top:6px;
+  align-self:center;
+  width:100%;
+  max-width:320px;
+  text-align:center;
+}
+.btn-publicar:hover{ background:#1c3d2c; }
+
+.small-link{
+  margin-top:6px;
+  color: #234d37;
+  text-decoration:none;
+  font-size:0.95rem;
+}
+
+@media (max-width: 767.98px){
+  aside{ display:none; }
+  main.container{ margin-left:0; }
+  .hero-forgot .panel{
+    padding: 28px 18px;
+    border-radius: 10px;
+  }
+  .panel h2{ font-size:1.3rem; }
+}
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a href="telainicial2.html" class="d-flex align-items-center gap-2">
+    <img src="image/logo ecotech.png" alt="Logo EcotechRoots" width="80" height="80">
+  </a>
+  <div class="flex-grow-1 d-flex justify-content-center ms-3">
+    <span class="fw-bold text-white">EcotechRoots</span>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<aside class="sidebar d-none d-md-flex flex-column p-4 text-white">
+  <div class="mt-auto">
+    <div class="small mt-2">© 2025 Ecotech</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="container">
+  <div class="hero-forgot">
+    <div class="panel">
+      <img class="panel-logo" src="image/logo ecotech.png" alt="logo" />
+      <h2>Crie sua Nova Senha</h2>
+
+      <p class="help">Digite sua nova senha e confirme abaixo para redefinir sua conta.</p>
+
+      <form id="newPassForm" class="newpass-form" onsubmit="return false;">
+        <label for="senha">Nova Senha</label>
+        <input id="senha" type="password" placeholder="Digite a nova senha" required />
+
+        <label for="confirmar">Confirmar Senha</label>
+        <input id="confirmar" type="password" placeholder="Confirme a nova senha" required />
+
+        <button id="savePass" class="btn-publicar" type="submit">Salvar Nova Senha</button>
+      </form>
+
+      <a class="small-link" href="telalogin.html">&larr; Voltar ao login</a>
+    </div>
+  </div>
+</main>
+
+<!-- Script -->
+<script>
+  document.getElementById('newPassForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const senha = document.getElementById('senha').value.trim();
+    const confirmar = document.getElementById('confirmar').value.trim();
+
+    if(!senha || !confirmar){
+      alert('Preencha todos os campos.');
+      return;
+    }
+    if(senha !== confirmar){
+      alert('As senhas não coincidem.');
+      return;
+    }
+    alert('Senha redefinida com sucesso!');
+    // Redirecionar após redefinição:
+    // window.location.href = 'telalogin.html';
+  });
+</script>
+
+</body>
+</html>

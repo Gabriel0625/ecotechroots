@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcotechRoots</title>
+  <link rel="shortcut icon" href="favicon.com/favicon.png" type="image/x-icon" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    :root {
+      --bege: rgba(200, 241, 153, 0.15);
+      --verde-900: #27b87bcb;
+      --verde-800: #234d37;
+      --verde-700: #2d6a4f;
+      --verde-400: #32855b;
+      --verde-50: #FEFFF1;
+      --texto: #243c3b;
+      --branco: rgba(254, 255, 241, 1);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Roboto", sans-serif;
+      background: var(--bege);
+      color: var(--verde-700);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--verde-800);
+      color: var(--branco);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      z-index: 1000;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .d-flex.min-vh-100 {
+      display: flex;
+      height: calc(100vh - 60px);
+      margin-top: 0; /* Remove margem extra para subir tudo */
+      overflow: hidden;
+      justify-content: center;
+      align-items: flex-start; /* Mais próximo do topo */
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 220px;
+      height: calc(100vh - 60px);
+      background: var(--verde-800);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar .nav-link {
+      color: var(--verde-100);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .nav-link:hover {
+      color: var(--verde-50);
+      transform: translateX(4px);
+    }
+
+    main {
+      margin-left: 220px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+.mapa-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  align-items: flex-start; /* aproxima do topo */
+  gap: 40px;
+  padding: 80px;
+  flex-wrap: wrap;
+  margin-top: 20px; /* pequeno espaço do topo */
+}
+
+    .mapa-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .titulo-mapa {
+      text-align: center;
+      color: var(--verde-800);
+      font-family: Montserrat, sans-serif;
+      margin-bottom: 10px;
+      font-size: 30px;
+    }
+
+    #mapa {
+      width: 800px;
+      height: 450px;
+      border-radius: 12px;
+    }
+
+    form {
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 350px;
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+    }
+
+    form h3 {
+      font-family: Montserrat;
+      color: #234d37;
+      margin-bottom: 20px;
+    }
+
+    .quantidade-wrapper {
+      margin-bottom: 20px;
+    }
+
+    .quantidade-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 2px solid var(--verde-700);
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .quantidade-box button {
+      background: var(--verde-500);
+      color: rgb(5, 0, 0);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .quantidade-box button:hover {
+      background: var(--verde-700);
+    }
+
+    .form-control {
+      border-radius: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 16px;
+      padding: 12px;
+      background-color: #fff1f100;
+    }
+
+    .btn-animated {
+      position: relative;
+      display: inline-block;
+      padding: 0.8rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #2d6a4f, #52b788);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 8px 15px rgba(37, 122, 79, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      user-select: none;
+      width: 100%;
+    }
+
+    .btn-animated:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 20px rgba(37, 122, 79, 0.6);
+      background: linear-gradient(135deg, #52b788, #2d6a4f);
+    }
+
+    @media (max-width: 767.98px) {
+      .sidebar { display: none; }
+      main { margin-left: 0; }
+      .mapa-wrapper { flex-direction: column; align-items: center; margin-top: 10px; }
+      #mapa { width: 100%; height: 300px; }
+      form { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="d-flex align-items-center px-4 py-2">
+    <a href="telainicial.html" class="d-flex align-items-center gap-2">
+      <img src="image/logo ecotech.png" alt="Logo EcotechRoots" width="80" height="80" />
+    </a>
+    <div class="flex-grow-1 d-flex justify-content-center">
+      <span class="fw-bold text-white">EcotechRoots</span>
+    </div>
+    <a href="telalogin.html" class="fw-bold text-white text-decoration-none">Entrar</a>
+  </header>
+
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <aside class="sidebar d-none d-md-flex flex-column p-4 text-white">
+      <nav class="nav flex-column gap-2">
+        <a class="nav-link" href="telalogin.html">Início</a>
+        <a class="nav-link" href="telalogin.html">Projeto</a>
+        <a class="nav-link" href="telalogin.html">Conscientização</a>
+        <a class="nav-link" href="telalogin.html">Mapa Pin</a>
+        <a class="nav-link" href="telalogin.html">Publicação</a>
+        <a class="nav-link" href="sobre.html">Sobre nós</a>
+      </nav>
+      
+      <div class="mt-auto">
+        <div class="small mt-2">© 2025 Ecotech</div>
+      </div>
+    </aside>
+
+    <!-- Conteúdo principal -->
+    <main>
+      <div class="mapa-wrapper">
+        <!-- Mapa com título -->
+        <div class="mapa-container">
+          <h1 class="titulo-mapa">Pontos de Coleta</h1>
+          <div id="mapa"></div>
+        </div>
+
+        <!-- Formulário -->
+        <form id="formDoacao">
+          <h3>Doação de Mudas</h3>
+
+          <!-- Quantidade -->
+          <div class="quantidade-wrapper">
+            <label>Quantidade de Mudas</label>
+            <div class="quantidade-box">
+              <button type="button" id="diminuir">-</button>
+              <span id="quantidade">1</span>
+              <button type="button" id="aumentar">+</button>
+            </div>
+            <input type="hidden" name="quantidade" id="inputQuantidade" value="1">
+          </div> <hr>
+
+          <!-- Inputs -->
+          <input type="text" name="nome" class="form-control" placeholder="Nome Completo" required>
+          <input type="email" name="email" class="form-control" placeholder="Email" required><hr>
+          <input type="text" name="especie" class="form-control" placeholder="Espécie da Muda" required>
+
+          <!-- Coordenadas escondidas -->
+          <input type="hidden" name="latitude" id="latitude">
+          <input type="hidden" name="longitude" id="longitude">
+
+          <button type="submit" class="btn-animated">Enviar Doação</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Mapa
+    const map = L.map('mapa').setView([-24.0762, -46.6727], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker;
+
+    map.on('click', function(e) {
+      const { lat, lng } = e.latlng;
+      if (marker) map.removeLayer(marker);
+
+      marker = L.marker([lat, lng])
+        .bindPopup(`Local escolhido:<br>Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`)
+        .openPopup()
+        .addTo(map);
+
+      document.getElementById("latitude").value = lat;
+      document.getElementById("longitude").value = lng;
+    });
+
+    // Quantidade +/-
+    let quantidade = 1;
+    const spanQtd = document.getElementById("quantidade");
+    const inputQtd = document.getElementById("inputQuantidade");
+
+    document.getElementById("aumentar").addEventListener("click", () => {
+      quantidade++;
+      spanQtd.textContent = quantidade;
+      inputQtd.value = quantidade;
+    });
+
+    document.getElementById("diminuir").addEventListener("click", () => {
+      if (quantidade > 1) {
+        quantidade--;
+        spanQtd.textContent = quantidade;
+        inputQtd.value = quantidade;
+      }
+    });
+
+    // Envio do formulário
+    document.getElementById("formDoacao").addEventListener("submit", function(e){
+      e.preventDefault();
+      let formData = new FormData(this);
+
+      fetch("salvar_doacao.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert(data);
+        this.reset();
+        spanQtd.textContent = "1";
+        inputQtd.value = "1";
+        if (marker) map.removeLayer(marker);
+      })
+      .catch(err => console.error(err));
+    });
+  </script>
+</body>
+</html>
