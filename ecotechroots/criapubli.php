@@ -1,0 +1,404 @@
+<?php
+include_once __DIR__ . '/php/conexao.php';
+include_once __DIR__ . '/php/auth.php';
+
+if (!is_logged()) {
+    header('Location: telalogin.php');
+    exit;
+}
+
+
+$usuario_id = $_SESSION['user_id'];
+$msg = "";
+
+// Quando o usuário clicar em "Publicar"
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titulo = trim($_POST['titulo'] ?? '');
+    $descricao = trim($_POST['descricao'] ?? '');
+    $lat = $_POST['lat'] ?? null;
+    $lng = $_POST['lng'] ?? null;
+    $img_publicacao = null;
+
+    // Upload da imagem
+    if (!empty($_FILES['imagem']['name'])) {
+        $ext = strtolower(pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION));
+        $permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+        if (in_array($ext, $permitidas)) {
+            $nomeArquivo = uniqid('pub_') . '.' . $ext;
+            $pastaDestino = __DIR__ . '/uploads/publicacoes/';
+
+            if (!is_dir($pastaDestino)) mkdir($pastaDestino, 0777, true);
+
+            $caminho = $pastaDestino . $nomeArquivo;
+            if (move_uploaded_file($_FILES['imagem']['tmp_name'], $caminho)) {
+                $img_publicacao = 'uploads/publicacoes/' . $nomeArquivo;
+            }
+        }
+    }
+
+    if ($titulo && $descricao) {
+        $sql = "INSERT INTO tb_publicacao (tb_usuarios_id_usuarios, nm_publicacao, descricao, coordenadas, img_publicacao)
+                VALUES (?, ?, ?, ST_GeomFromText(?), ?)";
+        $stmt = $mysqli->prepare($sql);
+
+        $ponto = "POINT($lat $lng)";
+        $stmt->bind_param("issss", $usuario_id, $titulo, $descricao, $ponto, $img_publicacao);
+        $stmt->execute();
+
+        $msg = "Publicação criada com sucesso!";
+    } else {
+        $msg = "Preencha todos os campos obrigatórios!";
+    }
+}
+?>
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EcotechRoots - Criar Publicação</title>
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<link rel="shortcut icon" href="favicon.com/favicon.png" type="image/x-icon" />
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+      :root {
+      --bege: rgba(200, 241, 153, 0.15);
+      --verde-900: #27b87bcb;
+      --verde-800: #234d37;
+      --verde-700: #2d6a4f;
+      --verde-500: #52b788;
+      --verde-400: #32855b;
+      --verde-50: #FEFFF1;
+      --texto: #243c3b;
+      --branco: rgba(254, 255, 241, 1);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Roboto", sans-serif;
+      background: var(--bege);
+      color: var(--verde-700);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--verde-800);
+      color: var(--branco);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      z-index: 1000;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+      .d-flex.min-vh-100 {
+      display: flex;
+      height: calc(100vh - 60px); /* restante da tela */
+      margin-top: 60px;
+      overflow: hidden;
+    }
+
+    /* Sidebar fixa */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 220px;
+      height: calc(100vh - 60px);
+      background: var(--verde-800);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar .nav-link {
+      color: var(--verde-100);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .nav-link:hover {
+      color: var(--verde-50);
+      transform: translateX(4px);
+    }
+
+    main {
+      margin-left: 220px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+.user-profile img {
+  width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; transition: transform 0.2s ease;
+}
+.user-profile img:hover { transform: scale(1.05); }
+
+.sidebar {
+  position: fixed; top:60px; left:0; width:220px; height:calc(100vh - 60px);
+  background: var(--verde-800); padding:2rem 1rem; overflow-y:auto;
+}
+.sidebar .nav-link { color: var(--branco); font-weight:500; margin-bottom:0.5rem; transition:0.3s; }
+.sidebar .nav-link:hover {
+  color: #ffffff; /* branco no hover */
+  transform: translateX(4px);
+}
+
+
+main {
+  margin-left: 220px; padding:80px 2% 40px; min-height: calc(100vh - 60px); display:flex; flex-direction:column;
+}
+
+.card-publicacao{
+  background:var(--branco);
+  border-radius:12px;
+  padding:1.5rem;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-area{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem;
+  align-items:start;
+}
+
+.preview-imagem{
+  height:220px;
+  border-radius:12px;
+  border:2px dashed var(--verde-500);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  background:rgba(200,241,153,0.06);
+  overflow:hidden;
+}
+.preview-imagem img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+#map, #modalMap { width:100%; height:220px; border-radius:10px; }
+
+textarea{
+  width:100%;
+  min-height:90px;
+  border-radius:8px;
+  border:1px solid #cfd8cf;
+  padding:0.6rem;
+  resize:vertical;
+  font-size:14px;
+
+}
+
+.btn-publicar {
+  background: linear-gradient(135deg, var(--verde-700), var(--verde-500)) !important;
+  border: none !important;
+  border-radius: 50px !important;
+  font-weight: 600;
+  padding: 0.7rem 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  color: white;
+}
+.btn-publicar:hover {
+  background: linear-gradient(135deg, var(--verde-500), var(--verde-700)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+.btn-publicar:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.feed-list{ margin-top:1.2rem; display:flex; flex-direction:column; gap:1rem;}
+.feed-card{
+  display:flex;
+  gap:1rem;
+  align-items:flex-start;
+  padding:0.8rem;
+  border-radius:10px;
+  background:#fcfff8;
+  border:1px solid rgba(50,133,91,0.08);
+}
+.feed-thumb{ width:160px; height:100px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#eee; }
+.feed-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.feed-meta p{ margin:0 0.25rem 0.25rem 0; color:#234d37; }
+
+   @media (max-width: 767.98px) {
+      .sidebar { display: none; }
+      main { margin-left: 0; }
+  .form-area{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="telainicial.php"><img src="image/logo ecotech.png" alt="Logo" width="80" height="80"></a>
+  <div class="flex-grow-1 d-flex justify-content-center ms-3">
+    <span class="fw-bold text-white">EcotechRoots</span>
+  </div>
+  <a href="perfil.html" class="user-profile ms-auto">
+    <img id="userAvatar" src="image/imguser.png" alt="Usuário">
+  </a>
+</header>
+
+    <!-- Sidebar -->
+  
+    <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <aside class="sidebar d-none d-md-flex flex-column p-4 text-white">
+      <nav class="nav flex-column gap-2">
+        <a class="nav-link" href="telainicial.php">Início</a>
+        <a class="nav-link" href="telaprojeto.html">Projeto</a>
+        <a class="nav-link" href="telaconcientizacao.html">Conscientização</a>
+        <a class="nav-link" href="telapin.html">Mapa Pin</a>
+        <a class="nav-link" href="publicacoes.php">Publicação</a>
+        <a class="nav-link" href="sobre.html">Sobre nós</a>
+      </nav>
+      
+      <div class="mt-auto">
+        <a class="nav-link" href="logout.html">Sair</a>
+        <div class="small mt-2">© 2025 Ecotech</div>
+      </div>
+    </aside>
+
+
+
+
+
+
+
+<main>
+  <div class="card-publicacao">
+    <h4 class="mb-2 text-center">Faça sua Publicação</h4>
+
+    <div class="form-area">
+      <div>
+        <label>Imagem</label>
+        <div class="preview-imagem" id="previewImagem">Clique para adicionar imagem</div>
+        <input type="file" id="inputImagem" accept="image/*" style="display:none">
+      </div>
+
+      <div>
+        <label>Local no mapa</label>
+        <div id="map"></div>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label>Legenda</label>
+      <textarea id="legenda" placeholder="Digite a legenda"></textarea>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3 gap-2">
+      <button class="btn-publicar" id="btnPublicar">Publicar</button>
+    </div>
+  </div>
+
+  <section id="feedSection" class="mt-4" style="display:none;">
+    <h5>Feed de Publicações</h5>
+    <div id="feedList" class="feed-list"></div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const LS_KEY = 'publicacoes_ecotech';
+
+const inputImagem = document.getElementById('inputImagem');
+const previewDiv = document.getElementById('previewImagem');
+const btnPublicar = document.getElementById('btnPublicar');
+const feedSection = document.getElementById('feedSection');
+const feedList = document.getElementById('feedList');
+const legendaEl = document.getElementById('legenda');
+
+const map = L.map('map').setView([-23.9989, -46.4035], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+let marcador = null;
+map.on('click', (e)=>{
+  if(!marcador) marcador = L.marker(e.latlng,{draggable:true}).addTo(map);
+  else marcador.setLatLng(e.latlng);
+});
+
+previewDiv.addEventListener('click', ()=>inputImagem.click());
+inputImagem.addEventListener('change', ()=>{
+  const file = inputImagem.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=> previewDiv.innerHTML = `<img src="${reader.result}" alt="preview">`;
+  reader.readAsDataURL(file);
+});
+
+btnPublicar.addEventListener('click', ()=>{
+  if(!inputImagem.files[0]) return alert('Adicione uma imagem');
+  if(!legendaEl.value.trim()) return alert('Digite uma legenda');
+  if(!marcador) return alert('Escolha um local no mapa');
+
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const pub = {
+      id: Date.now(),
+      imagemBase64: reader.result,
+      legenda: legendaEl.value.trim(),
+      lat: marcador.getLatLng().lat,
+      lng: marcador.getLatLng().lng,
+      criadoEm: new Date().toISOString()
+    };
+    const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    arr.unshift(pub);
+    localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    alert('Publicação salva com sucesso!');
+    limparFormulario();
+    renderFeed();
+    feedSection.style.display = 'block';
+  };
+  reader.readAsDataURL(inputImagem.files[0]);
+});
+
+function limparFormulario(){
+  inputImagem.value = '';
+  previewDiv.innerHTML = 'Clique para adicionar imagem';
+  legendaEl.value = '';
+  if(marcador){ map.removeLayer(marcador); marcador = null; }
+}
+
+function renderFeed(){
+  const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  feedList.innerHTML = '';
+  if(arr.length === 0){ feedList.innerHTML = '<p class="text-muted">Nenhuma publicação ainda.</p>'; return; }
+  arr.forEach(pub=>{
+    const div = document.createElement('div');
+    div.className = 'feed-card';
+    div.innerHTML = `
+      <div class="feed-thumb"><img src="${pub.imagemBase64}" alt="thumb"></div>
+      <div class="feed-meta flex-grow-1">
+        <p>${pub.legenda}</p>
+        <p><small class="text-muted">Lat: ${Number(pub.lat).toFixed(4)}, Lng: ${Number(pub.lng).toFixed(4)} — ${new Date(pub.criadoEm).toLocaleString()}</small></p>
+      </div>
+    `;
+    feedList.appendChild(div);
+  });
+}
+renderFeed();
+</script>
+</body>
+</html>

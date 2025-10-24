@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EcotechRoots</title>
+<link rel="shortcut icon" href="favicon.com/favicon.png" type="image/x-icon" />
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+
+<!-- Fonts -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+:root {
+  --bege: rgba(200, 241, 153, 0.15);
+  --verde-900: #27b87bcb;
+  --verde-800: #234d37;
+  --verde-700: #2d6a4f;
+  --verde-500: #52b788;
+  --verde-400: #32855b;
+  --verde-50: #FEFFF1;
+  --texto: #243c3b;
+  --branco: #FEFFF1;
+}
+
+/* Reset e base */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background: var(--bege);
+  color: var(--verde-700);
+}
+
+/* Header fixo */
+header {
+  background-color: var(--verde-800);
+  color: var(--branco);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem 0 220px; /* padding-left igual ao main margin-left */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+@media (max-width: 767px){
+  header {
+    padding-left: 1rem; /* no mobile, padding menor */
+  }
+}
+
+
+/* Sidebar fixa */
+.sidebar {
+  position: fixed;
+  top: 60px; /* abaixo do header */
+  left: 0;
+  width: 220px;
+  height: calc(100vh - 60px);
+  background: var(--verde-800);
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+
+.sidebar .nav-link {
+  color: var(--branco);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+  color: var(--verde-50);
+  transform: translateX(4px);
+}
+
+/* Conteúdo principal */
+main {
+  margin-left: 220px; /* espaço para sidebar */
+  padding: 80px 2rem 2rem 2rem; /* espaço para header */
+}
+
+/* Títulos */
+h2 { 
+  color: var(--verde-800); 
+  text-align: center; 
+  margin-bottom: 2rem; 
+  font-weight: 900;
+  font-size: 40px;
+}
+
+/* Seções */
+.secao-sobre, .secao-equipe, .secao-contato {
+  margin-bottom: 3rem;
+  font-size: large;
+}
+
+/* Seção de contato → centralizado na tela toda */
+.secao-contato {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 4rem;
+  gap: 1.5rem;
+}
+
+
+.secao-contato h2 {
+  width: 100%;
+  text-align: center;
+
+
+}
+
+/* Formulário mais elegante */
+.form-contato {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--verde-800);
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.form-contato input, .form-contato textarea {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+}
+.form-contato button {
+  background: var(--verde-500);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+.form-contato button:hover { 
+  background: var(--verde-700); 
+}
+
+/* Sobre nós */
+.secao-sobre {
+  text-align: center;
+
+}
+.descricao-sobre {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  font-size: 1.1rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+/* Caixas Missão/Visão */
+.caixas-sobre { 
+  display: flex; 
+  gap: 1rem; 
+  flex-wrap: wrap; 
+  justify-content: center; 
+}
+.caixa {
+  background: var(--verde-800);
+  color: var(--branco);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 0.5rem;
+  flex: 1;
+  text-align: center;
+}
+.caixa h5 {
+  margin-bottom: 1rem;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+/* Equipe */
+.equipe-circulos {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: nowrap;
+  position: relative;
+  margin-top: 2rem;
+}
+
+.circulo {
+  width: 180px;
+  height: 180px;
+  border: 4px solid var(--verde-700);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--verde-50);
+  flex-direction: column;
+  position: relative;
+}
+
+/* Linha entre os círculos */
+.circulo:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -3rem;
+  width: 3rem;
+  height: 4px;
+  background-color: var(--verde-700);
+  z-index: -1;
+}
+
+.circulo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.circulo .nome-membro {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--verde-800);
+}
+
+/* Caixa da equipe */
+.caixa-equipe {
+  background:#dae9b043;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 220px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--verde-800);
+}
+
+/* Responsivo */
+@media (max-width: 767px){
+  .sidebar { display: none; }
+  main { margin-left: 0; padding: 80px 1rem 2rem 1rem; }
+  .caixas-sobre { flex-direction: column; }
+  .equipe-circulos { 
+    flex-direction: column; 
+    align-items: center; 
+  }
+  .circulo:not(:last-child)::after {
+    display: none;
+  }
+
+  /* no mobile o contato volta pro fluxo normal */
+  .secao-contato {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="d-flex align-items-center px-4 py-2 position-fixed w-100" style="height: 60px;">
+  <a href="telainicial.php" class="d-flex align-items-center gap-2">
+    <img src="image/logo ecotech.png" alt="Logo EcotechRoots" width="80" height="80" />
+  </a>
+  <span class="fw-bold text-white position-absolute" 
+        style="top: 50%; left: 50%; transform: translate(-50%, -50%) translateX(100px);">
+    EcotechRoots
+  </span>
+</header>
+
+
+<div class="d-flex min-vh-100">
+  <!-- Sidebar -->
+  <aside class="sidebar d-none d-md-flex flex-column p-4 text-white">
+    <nav class="nav flex-column gap-2">
+      <a class="nav-link" href="telainicial.php">Início</a>
+      <a class="nav-link" href="telaprojeto.html">Projeto</a>
+      <a class="nav-link" href="telaconcientizacao.html">Conscientização</a>
+      <a class="nav-link" href="telaperfileditar.php">Meu Perfil</a>
+      <a class="nav-link" href="publicacoes.php">Publicação</a>
+      <a class="nav-link" href="sobre.html">Sobre nós</a>
+    </nav>
+    
+    <div class="mt-auto">
+
+      <div class="small mt-2">© 2025 Ecotech</div>
+    </div>
+  </aside>
+
+  <!-- Conteúdo -->
+  <main>
+    <section class="secao-sobre">
+      <h2>Sobre Nós</h2>
+      <p class="descricao-sobre">
+        Conheça nossa equipe, missão e valores que impulsionam o Ecotech Roots,
+        e o nosso compromisso com a sustentabilidade.
+      </p>
+      <div class="caixas-sobre">
+        <div class="caixa">
+          <h5>Missão</h5>
+          <p>A Élpis surgiu com a intenção de desenvolver soluções
+          que unam tecnologia e responsabilidade ambiental. 
+          Nossa missão é criar projetos sustentáveis que façam a 
+          diferença no cuidado com o meio ambiente, contribuindo
+          para uma relação mais equilibrada entre o ser humano e 
+          a natureza.</p>
+        </div>
+        <div class="caixa">
+          <h5>Visão</h5>
+          <p>A Élpis tem como visão contribuir de forma significativa
+          para o desenvolvimento sustentável da região onde
+          atua, utilizando estratégias e inovação. Nosso objetivo
+          é transformar a região em um exemplo de referência
+          em sustentabilidade, mostrando que é possível evoluir 
+          com responsabilidade e respeito ao meio ambiente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao-equipe">
+      <h2>Equipe</h2>
+      <div class="equipe-circulos">
+
+        <div class="caixa-equipe">
+          <div class="circulo">
+            <img src="image/kenzo.jpg" alt="Membro 1">
+          </div><br>
+          <div class="nome-membro">Eduardo Kenzo</div>
+        </div>
+
+        <div class="caixa-equipe">
+          <div class="circulo">
+            <img src="image/gabriel1.jpg" alt="Membro 2">
+          </div><br>
+          <div class="nome-membro">Gabriel Silva</div>
+        </div>
+
+        <div class="caixa-equipe">
+          <div class="circulo">
+            <img src="image/ryan.png" alt="Membro 3">
+          </div><br>
+          <div class="nome-membro">Ryan Xavier</div>
+        </div>
+
+        <div class="caixa-equipe">
+          <div class="circulo">
+            <img src="image/sara.jpg" alt="Membro 4">
+          </div><br>
+          <div class="nome-membro">Sara Tafinis</div>
+        </div>
+
+        <div class="caixa-equipe">
+          <div class="circulo">
+            <img src="image/tarsis.jpg" alt="Membro 5">
+          </div><br>
+          <div class="nome-membro">Tarsis Chagas</div>
+        </div> 
+      </div>
+    </section>
+
+    <section class="secao-contato">
+      <h2>Entre em Contato <br>
+      Conosco</h2>
+
+      <form class="form-contato">
+        <input type="text" placeholder="Nome completo" required />
+        <input type="email" placeholder="Email " required />
+        <textarea placeholder="Mensagem" required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

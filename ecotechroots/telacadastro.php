@@ -1,0 +1,72 @@
+
+<!DOCTYPE html> <html lang="pt-br">
+     <head> <meta charset="UTF-8"> 
+     <meta name="viewport" content="width=device-width, initial-scale=1"> 
+     <title>EcotechRoots</title>
+      <link rel="shortcut icon" href="favicon.com/favicon.png" type="image/x-icon"> <link rel="stylesheet" href="css/bootstrap.min.css" />
+       <link rel="stylesheet" href="css/telacadastro.css"> 
+       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+    </head> <body> <!-- Header --> <header class="d-flex align-items-center px-4 py-2"> <a href="telainicial.php" class="d-flex align-items-center gap-2"> 
+        <img src="image/logo ecotech.png" alt="Logo EcotechRoots" width="80" height="80"> 
+    </a> <div class="flex-grow-1 d-flex justify-content-center"> 
+        <span class="fw-bold text-white">EcotechRoots</span>
+     </div> </header> <!-- Main Content --> <main> 
+        <div class="form-container"> <h2>Junte-se ao movimento</h2> 
+        <p>Crie seu perfil e comece a reflorestar</p>
+         <form id="formCadastro" action="php/cadastro.php" method="post">
+             <div class="mb-3 input-group"> 
+                <span class="input-group-text"><i class="bi bi-person">
+
+                </i></span> <input type="text" class="form-control" name="nome" placeholder="Nome completo" required> </div> 
+                <div class="mb-3 input-group"> <span class="input-group-text">
+                    <i class="bi bi-envelope"></i></span> 
+                    <input type="email" class="form-control" name="email" placeholder="Email" required> 
+                </div> 
+                <!-- Senha --> 
+                <div class="mb-3 input-group">
+                     <span class="input-group-text"><i class="bi bi-lock">
+
+                     </i></span> <input type="password" id="senha" class="form-control" name="senha" placeholder="Senha" required> </div> 
+                     <!-- Confirmar Senha --> 
+                     <div class="mb-4 input-group"> 
+                        <span class="input-group-text"><i class="bi bi-lock-fill">
+
+                        <script>
+function validarSenhaForte(senha) {
+    const erros = [];
+    if(senha.length < 8) erros.push("mínimo 8 caracteres");
+    if(!/[A-Z]/.test(senha)) erros.push("uma letra maiúscula");
+    if(!/[a-z]/.test(senha)) erros.push("uma letra minúscula");
+    if(!/[0-9]/.test(senha)) erros.push("um número");
+    if(!/[\W_]/.test(senha)) erros.push("um caractere especial");
+    return erros;
+}
+
+document.getElementById("formCadastro").addEventListener("submit", function(e){
+    const senha = document.getElementById("senha").value;
+    const confirmar = document.getElementById("confirmarSenha").value;
+
+    if (senha !== confirmar) {
+        e.preventDefault();
+        alert("As senhas não coincidem!");
+        return;
+    }
+
+    const erros = validarSenhaForte(senha);
+    if (erros.length > 0) {
+        e.preventDefault();
+        alert("Senha fraca! Ela precisa ter: " + erros.join(", "));
+    }
+});
+</script>
+
+
+                        </i></span> <input type="password" id="confirmarSenha" class="form-control" name="confirmar_senha" placeholder="Confirmar Senha" required> </div> 
+                        <button type="submit" class="btn btn-success w-100 rounded-3 mb-3">Cadastrar-se</button> 
+                        <div class="text-center"> <span>Já tem uma conta? <a href="telalogin.html">Fazer login</a>
+                    </span> </div> <hr> <div class="text-center"> <span><a href="telainicial.php">Voltar ao Início</a><
+                    /span> </div> </form> </div> </main>
+                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> <script> document.getElementById("formCadastro").addEventListener("submit", function (e) { const senha = document.getElementById("senha").value; const confirmar = document.getElementById("confirmarSenha").value; if (senha !== confirmar) { e.preventDefault(); alert("As senhas não coincidem!"); } });
+                      </script> 
+                      </body> 
+                      </html>
